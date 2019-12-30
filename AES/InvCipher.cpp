@@ -1,7 +1,6 @@
 #include "globals.h"
 #include "util.h"
 
-
 /* 字节代替，非线性变换
 这里通过S_Box实现
 前两个字节对应的16进制数作为行号，后两个字节对应的16进制数作为列号
@@ -40,12 +39,13 @@ void InvMixColumns(byte state[4][4]) {
     int s3=state[3][i].to_ulong();
     
     // 因为实现了矩阵 乘2，乘3的运算，所以大数运算靠小数加法实现
-    // 例： 15*s0 = 3*s0 + 3*s0 + 3*s0 + 3*s0 + 3*s0
+    // 例： 15·s0 = 8·s0 ^ 4·s0 ^ 2·s0
     // 又因为矩阵乘法特殊，**加法为异或** 上式 可以化简为 15*s0 = 3*s0
-    // 可知： 0e = 03 |  09 = ~03  |  0d = 02  | 0b = 03
-    state[0][i] = GFMul(3, s0)^GFMul(3, s1)^GFMul(2, s2)^(~GFMul(3, s3));
-    state[1][i] = (~GFMul(3, s0))^GFMul(3, s1)^GFMul(3, s2)^GFMul(2, s3);
-    state[2][i] = GFMul(2, s0)^(~GFMul(3, s1))^GFMul(3, s2)^GFMul(3, s3);
-    state[3][i] = GFMul(3, s0)^GFMul(2, s1)^(~GFMul(3, s2))^GFMul(3, s3);
+    // 可知： 0e = 1000^0100^0010 |  09 = 1000^0001  |  0d = 1000^0100  | 0b = 1000^0010^0001
+    
+    state[0][i] = (GFMul(8, s0)^GFMul(4, s0)^GFMul(2, s0))^(GFMul(8, s1)^GFMul(2, s1)^s1)^(GFMul(8, s2)^GFMul(4, s2))^(GFMul(8, s3)^s3);
+    state[1][i] = (GFMul(8, s1)^GFMul(4, s1)^GFMul(2, s1))^(GFMul(8, s2)^GFMul(2, s2)^s2)^(GFMul(8, s3)^GFMul(4, s3))^(GFMul(8, s0)^s0);
+    state[2][i] = (GFMul(8, s2)^GFMul(4, s2)^GFMul(2, s2))^(GFMul(8, s3)^GFMul(2, s3)^s3)^(GFMul(8, s0)^GFMul(4, s0))^(GFMul(8, s1)^s1);
+    state[3][i] = (GFMul(8, s3)^GFMul(4, s3)^GFMul(2, s3))^(GFMul(8, s0)^GFMul(2, s0)^s0)^(GFMul(8, s1)^GFMul(4, s1))^(GFMul(8, s2)^s2);
   }
 };
