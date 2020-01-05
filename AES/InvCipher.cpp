@@ -1,3 +1,4 @@
+#include "InvCipher.h"
 #include "globals.h"
 #include "util.h"
 
@@ -25,7 +26,7 @@ void InvShiftRows(byte state[4][4]) {
       int t=j-i;
       if ((j-i) < 0)
         t = 4+j-i;
-      state[j] = temp[t];
+      state[i][j] = temp[t];
     }
   }
 };
@@ -47,21 +48,24 @@ void InvMixColumns(byte state[4][4]) {
     state[2][i] = (GFMul(8, s2)^GFMul(4, s2)^GFMul(2, s2))^(GFMul(8, s3)^GFMul(2, s3)^s3)^(GFMul(8, s0)^GFMul(4, s0))^(GFMul(8, s1)^s1);
     state[3][i] = (GFMul(8, s3)^GFMul(4, s3)^GFMul(2, s3))^(GFMul(8, s0)^GFMul(2, s0)^s0)^(GFMul(8, s1)^GFMul(4, s1))^(GFMul(8, s2)^s2);
   }
-};
+}
 
-void InvCipher(state in[16], word w[Nk*(Nr+1)]) {
+void InvCipher(byte in[16], word w[Nk*(Nr+1)]) {
   byte state[4][4];
-  strToBytes(in.to_string(), state);
+  string str;
+  for (int i=0; i<16; i++)
+  	str = str + in[i].to_string();
+  str2Bytes(str, state);
   AddRoundKey(state, w, 0);
   for (int i=1; i<Nr; i++) {
-    InvShiftRow(state);
+    InvShiftRows(state);
     InvSubBytes(state);
     AddRoundKey(state, w, i*Nk);
     InvMixColumns(state);
   }
-  InvShiftRow(state);
+  InvShiftRows(state);
   InvSubBytes(state);
-  AddRoundKey(state, w, i*Nk);
+  AddRoundKey(state, w, Nr*Nk);
 
   // 将结果输入到文件
 }

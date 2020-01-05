@@ -2,8 +2,13 @@
 * 将 加密/解密 变换中共同用到的工具函数抽离，增加复用性
 */
 
+
 #ifndef _UTIL_H_
 #define _UTIL_H_
+
+#include<string.h>
+using namespace std;
+
 
 // 密钥扩展
 void KeyExpension(word key, word w[Nk*(Nr+1)]);

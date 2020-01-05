@@ -4,8 +4,8 @@
 CPP      = g++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = main.o 未命名1.o
-LINKOBJ  = main.o 未命名1.o
+OBJ      = Cipher.o InvCipher.o main.o util.o globals.o
+LINKOBJ  = Cipher.o InvCipher.o main.o util.o globals.o
 LIBS     = -L"F:/dev cpp/Dev-Cpp/MinGW64/lib" -L"F:/dev cpp/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3
 INCS     = -I"F:/dev cpp/Dev-Cpp/MinGW64/include" -I"F:/dev cpp/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"F:/dev cpp/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"F:/dev cpp/Dev-Cpp/MinGW64/include" -I"F:/dev cpp/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"F:/dev cpp/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"F:/dev cpp/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -24,8 +24,17 @@ clean: clean-custom
 $(BIN): $(OBJ)
 	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
 
+Cipher.o: Cipher.cpp
+	$(CPP) -c Cipher.cpp -o Cipher.o $(CXXFLAGS)
+
+InvCipher.o: InvCipher.cpp
+	$(CPP) -c InvCipher.cpp -o InvCipher.o $(CXXFLAGS)
+
 main.o: main.cpp
 	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
 
-未命名1.o: 未命名1.cpp
-	$(CPP) -c 未命名1.cpp -o 未命名1.o $(CXXFLAGS)
+util.o: util.cpp
+	$(CPP) -c util.cpp -o util.o $(CXXFLAGS)
+
+globals.o: globals.c
+	$(CPP) -c globals.c -o globals.o $(CXXFLAGS)

@@ -1,7 +1,11 @@
-#include "../include/globals.h"
+#include "globals.h"
+using namespace std;
+
 
 // 把biset类型变量转int
-#define bit2Int(byte b) b.to_ulong()
+int bit2Int(byte b) {
+  b.to_ulong();
+}
 
 // 将字符串转为byte类型的4*4数组
 byte str2Bytes(string str, byte w[4][4]) {
@@ -62,18 +66,19 @@ word RotWord(word w) {
   int last = bit2Int(temp);
 
   // 舍去高8位，并将其转为整型
-  int pre = bit2Int(w<<8);
+  int pre = (w<<8).to_ulong();
 
   // 将原word循环左移一个字节，并将高8位或到最后
-  word ret = (pre | temp);
+  word ret = (pre | last);
   return ret;
 }
 
 /* 密钥扩展算法 */
 void KeyExpansion(byte key[4*Nk], word w[4*(Nr+1)], int Nk) {
+  word temp;
   int i=0;
   for (; i<Nk; i++)
-    w[i] = bit2Int(k[4*i])<<3 + bit2Int(k[4*i+1])<<2 + bit2Int(k[4*i+2])<<1 + bit2Int(k[4*i+3]);
+    w[i] = bit2Int(key[4*i])<<3 + bit2Int(key[4*i+1])<<2 + bit2Int(key[4*i+2])<<1 + bit2Int(key[4*i+3]);
   while(i < 4*(Nr+1)) {
     temp = w[i-1];
     if (i%Nk == 0)
@@ -91,8 +96,7 @@ void KeyExpansion(byte key[4*Nk], word w[4*(Nr+1)], int Nk) {
 * 一次循环中，使用到的密钥长度为128
 */
 void AddRoundKey(byte state[4][4], word w[], int beg) {
-  beg = beg*32;   // 转换为2进制的开始位置，传入时，单位为word
-  string str = w.to_srting().substr(beg, 128);
+  string str = w[beg].to_string() + w[beg+1].to_string() + w[beg+2].to_string() + w[beg+3].to_string();
   byte temp[4][4];
   str2Bytes(str, temp);
   for (int i=0; i<4; i++) {
@@ -141,10 +145,27 @@ int GFMul(int a, int b) {
   }
 }
 
+
 // 密钥扩展
-void KeyExpension(word key, word w[Nk*(Nr+1)]) {
+void KeyExpension(byte key[4*Nk], word w[4*(Nr+1)]) {
+  word temp;
   int i=0;
-  for(; i<Nk*4; i++) {
-    
+  for(; i<Nk; i++) {
+    long a = key[4*i].to_ulong();
+    long b = key[4*i+1].to_ulong();
+    long c = key[4*i+2].to_ulong();
+    long d = key[4*i+3].to_ulong();
+	w[i] = (a<<24) + (b<<16) + (c<<8) + d;
+	i++;
+  }
+  i = Nk;
+  while(i<4*(Nr+1)) {
+    temp = w[i-1];
+    if (i%Nk == 0)
+      temp = SubWord(RotWord(temp)) ^ Rcon[i/Nk];
+    else if (Nk>6 && (i%Nk == 4))
+      temp = SubWord(temp);
+    w[i] = w[i-Nk]^temp;
+    i++;
   }
 }

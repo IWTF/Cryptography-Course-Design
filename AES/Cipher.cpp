@@ -1,3 +1,4 @@
+#include "Cipher.h"
 #include "globals.h"
 #include "util.h"
 
@@ -43,9 +44,12 @@ void MixColumns(byte state[4][4]) {
   }
 };
 
-void Cipher(byte in[16], word w[Nk(Nr+1)]) {
+void Cipher(byte in[16], word w[Nk*(Nr+1)]) {
   byte state[4][4];
-  str2Bytes(in.to_string(), state);
+  string str;
+  for (int i=0; i<16; i++)
+  	str = str + in[i].to_string();
+  str2Bytes(str, state);
   // 第一次轮密钥加法运算
   AddRoundKey(state, w, 0);
   // 进行Nr-1次迭代
@@ -58,7 +62,7 @@ void Cipher(byte in[16], word w[Nk(Nr+1)]) {
   // 最后一次不带MixColumns()
   SubBytes(state);
   ShiftRows(state);
-  AddRoundKey(state, w, i*Nk);
+  AddRoundKey(state, w, Nr*Nk);
 
   // 直接写入文件，就不进行转化了
   // out = state;

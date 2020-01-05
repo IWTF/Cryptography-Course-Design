@@ -1,6 +1,8 @@
 #include<iostream>
 using namespace std;
 
+#include "globals.h"
+#include "util.h"
 #include "Cipher.h"
 #include "InvCipher.h"
 
@@ -9,7 +11,9 @@ ifstream infile;
 ofstream outfile;
 
 int main() {
-  KeyExpension();
+//  word w[4*(Nr+1)];
+//  byte key[4];
+//  KeyExpension(key, w);
 
   byte in[16];
 
@@ -19,7 +23,7 @@ int main() {
 
   char filename[100];
   cout<<"请输入要加/解密的文件名：";
-  cin>>fileName;
+  cin>>filename;
 
   infile.open(filename);
 
@@ -33,7 +37,7 @@ int main() {
       in[i++] = data;
       infile>>data;
       if (i%16 == 0) {
-        Cipher(in, w);
+//        Cipher(in, w);
         i=0;
       }
     } // end while
@@ -44,7 +48,7 @@ int main() {
     while(infile) {
       infile>>in[i++];
       if (i%16 == 0) {
-        InvCipher(in, w);
+//        InvCipher(in, w);
         i=0;
       }
     } // end while
