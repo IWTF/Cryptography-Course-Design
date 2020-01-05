@@ -16,4 +16,6 @@ void InvMixColumns(byte state[4][4]);
 
 // 圈密钥加法变换 加密/解密一样，所以放到了util
 
+// 解密算法
+void InvCipher(state in[16], word w[Nk*(Nr+1)]);
 #endif

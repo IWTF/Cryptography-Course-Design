@@ -9,6 +9,7 @@
 typedef bitset<8> byte;
 typedef bitset<32> word;
 
+const int Nb = 4;
 const int Nk = 4;     // 密钥长度（4个字）
 const int Nr = 10;    // 圈变换次数
 

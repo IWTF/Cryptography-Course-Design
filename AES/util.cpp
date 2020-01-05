@@ -89,6 +89,7 @@ void KeyExpansion(byte key[4*Nk], word w[4*(Nr+1)], int Nk) {
 * 一次循环中，使用到的密钥长度为128
 */
 void AddRoundKey(byte state[4][4], word w[], int beg) {
+  beg = beg*32;   // 转换为2进制的开始位置，传入时，单位为word
   string str = w.to_srting().substr(beg, 128);
   byte temp[4][4];
   str2Bytes(str, temp);
@@ -124,6 +125,7 @@ int GFMul(int a, int b) {
       b ^= temp;
       return b;
     case 4:
+      // 如果不用byte对其高位进行截断，他可能会传入>0xff的整型，导致temp/128出错
       bTemp = GFMul(2, b);
       return GFMul(2, bTemp.to_ulong());
     case 8:

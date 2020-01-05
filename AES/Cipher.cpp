@@ -42,3 +42,24 @@ void MixColumns(byte state[4][4]) {
     state[3][i] = GFMul(2, s3)^GFMul(3, s0)^s2^s3;
   }
 };
+
+void Cipher(byte in[16], word w[Nk(Nr+1)]) {
+  byte state[4][4];
+  str2Bytes(in.to_string(), state);
+  // 第一次轮密钥加法运算
+  AddRoundKey(state, w, 0);
+  // 进行Nr-1次迭代
+  for(int i=1; i<Nr; i++) {
+    SubBytes(state);
+    ShiftRows(state);
+    MixColumns(state);
+    AddRoundKey(state, w, i*Nk);
+  }
+  // 最后一次不带MixColumns()
+  SubBytes(state);
+  ShiftRows(state);
+  AddRoundKey(state, w, i*Nk);
+
+  // 直接写入文件，就不进行转化了
+  // out = state;
+}

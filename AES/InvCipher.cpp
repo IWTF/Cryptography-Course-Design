@@ -49,3 +49,20 @@ void InvMixColumns(byte state[4][4]) {
     state[3][i] = (GFMul(8, s3)^GFMul(4, s3)^GFMul(2, s3))^(GFMul(8, s0)^GFMul(2, s0)^s0)^(GFMul(8, s1)^GFMul(4, s1))^(GFMul(8, s2)^s2);
   }
 };
+
+void InvCipher(state in[16], word w[Nk*(Nr+1)]) {
+  byte state[4][4];
+  strToBytes(in.to_string(), state);
+  AddRoundKey(state, w, 0);
+  for (int i=1; i<Nr; i++) {
+    InvShiftRow(state);
+    InvSubBytes(state);
+    AddRoundKey(state, w, i*Nk);
+    InvMixColumns(state);
+  }
+  InvShiftRow(state);
+  InvSubBytes(state);
+  AddRoundKey(state, w, i*Nk);
+
+  // 将结果输入到文件
+}
