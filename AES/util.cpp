@@ -6,6 +6,7 @@
 // 将字符串转为byte类型的4*4数组
 byte str2Bytes(string str, byte w[4][4]) {
   int beg = 0;
+  // 按列赋值，和书上二维数组结构相同
   for(int j=0; j<4; j++) {
     for (int i=0; i<4; i++) {
       byte temp(str.substr(beg*8, 8));
@@ -47,6 +48,7 @@ word SubWord(word w) {
   byte b3(str, 16, 8);
   byte b4(str, 24, 8);
   
+  // 只有0/1字符时，可以通过str直接给bitset赋值
   string targetStr = SubSingleByte(b1) + SubSingleByte(b2) + SubSingleByte(b3) + SubSingleByte(b4);
   word ret(targetStr);
   return ret;
@@ -136,5 +138,13 @@ int GFMul(int a, int b) {
       return GFMul(2, bTemp.to_ulong());
     default:
       return b;
+  }
+}
+
+// 密钥扩展
+void KeyExpension(word key, word w[Nk*(Nr+1)]) {
+  int i=0;
+  for(; i<Nk*4; i++) {
+    
   }
 }

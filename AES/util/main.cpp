@@ -1,4 +1,5 @@
 #include<iostream>
+#include<fstream>
 #include<bitset>
 #include<string.h>
 using namespace std;
@@ -10,37 +11,6 @@ const int Nb = 4;
 extern int m;
 //extern FILE* listing; /* 输出文件 */
 
-int GFMul(int a, int b) {
-  int temp;
-  byte bTemp;
-  switch(a) {
-    case 2:
-      temp = b;
-      b = b<<1;
-      if (temp/128 > 0)   // 判断b7是否为1
-        b = b^0x1b;
-      return b;
-    case 3:
-      temp = b;
-      b = b<<1;
-      if (temp/128 > 0)
-        b = b^0x1b;
-      b ^= temp;
-      return b;
-    case 4:
-      bTemp = GFMul(2, b);
-      return GFMul(2, bTemp.to_ulong());
-    case 8:
-      bTemp = GFMul(4, b);
-      return GFMul(2, bTemp.to_ulong());
-    case 16:
-      bTemp = GFMul(8, b);
-      return GFMul(2, bTemp.to_ulong());
-    default:
-      return b;
-  }
-}
-
 int main() {
 	byte a[4][4] = {
 		{12, 1, 1, 3},
@@ -49,9 +19,21 @@ int main() {
 		{12, 1, 1, 3},
 	};
 	
-	byte b = GFMul(0x10, 0x57)^GFMul(2, 0x57)^0x57;
-//	byte b = GFMul(0x10, 0x57);
-	cout<<b;
+	ifstream infile;
+	infile.open("message.txt");
+	byte in[16];
+	int i=0;
+	infile>>in[i++];
+	while(infile) {
+      infile>>in[i++];
+      if (i%16 == 0) {
+        for (int j=0; j<16; j++)
+      		cout<<in[j];
+      	cout<<"\n";
+        i=0;
+      }
+    } // end while
+
 	return 0;
 } 
 

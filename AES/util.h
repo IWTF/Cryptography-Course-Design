@@ -5,6 +5,9 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
+// 密钥扩展
+void KeyExpension(word key, word w[Nk*(Nr+1)]);
+
 // 辅助函数
 byte str2Bytes(string str, byte w[4][4]);
 void splitByte(byte b, int x, int y);
