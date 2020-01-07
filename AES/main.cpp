@@ -1,7 +1,6 @@
 #include<iostream>
 using namespace std;
 
-#include "globals.h"
 #include "util.h"
 #include "Cipher.h"
 #include "InvCipher.h"
@@ -9,6 +8,10 @@ using namespace std;
 /* 输入文件和输出文件 */
 ifstream infile;
 ofstream outfile;
+
+int const Nb = 4;
+int const Nk = 4;     // 瀵嗛挜闀垮害锛?涓瓧锛?
+int const Nr = 10;    // 鍦堝彉鎹㈡鏁?
 
 int main() {
 //  word w[4*(Nr+1)];

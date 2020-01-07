@@ -1,5 +1,4 @@
 #include "Cipher.h"
-#include "globals.h"
 #include "util.h"
 
 /* 字节代替，非线性变换

@@ -1,8 +1,6 @@
 /*
 * 加密函数
 */
-
-
 #ifndef _INVCIPHER_H_
 #define _INVCIPHER_H_
 

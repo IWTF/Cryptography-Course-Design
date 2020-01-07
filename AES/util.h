@@ -1,7 +1,8 @@
 /* 
 * 将 加密/解密 变换中共同用到的工具函数抽离，增加复用性
 */
-
+typedef bitset<8> byte;
+typedef bitset<32> word;
 
 #ifndef _UTIL_H_
 #define _UTIL_H_
@@ -9,6 +10,13 @@
 #include<string.h>
 using namespace std;
 
+
+
+extern ifstream infile;
+extern ofstream outfile;
+extern int Nb;
+extern int Nk;
+extern int Nr;
 
 // 密钥扩展
 void KeyExpension(word key, word w[Nk*(Nr+1)]);
