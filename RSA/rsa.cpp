@@ -1,5 +1,6 @@
 #include<iostream>
 #include<stdlib.h>
+#include<fstream>
 #include<bitset>
 #include<time.h>
 #include<math.h>
@@ -12,6 +13,13 @@ typedef bitset<32> DWord;
 
 unsigned long miniPrime[100];
 int num = 0;
+
+unsigned long d = 147;  // 解密密钥
+unsigned long e = 3;  // 加密密钥
+unsigned long n = 253;  // n=pq
+
+ifstream infile;
+ofstream outfile;
 
 #define randA2B(a, b) (rand() % (b-a+1))+ a;
 
@@ -75,6 +83,15 @@ int is_probable_prime(unsigned long n, int accuracy=5) {
   return TRUE;
 }
 
+// 初始化生成一些小的素数，提高大素数产生效率 
+void initMiniPrime() {
+	for (int i=0; i<530; i++) {
+		if (is_probable_prime(i, 10)) {
+			miniPrime[num++] = i;
+		}	
+	}
+}
+
 // 产生一个长度为n的大素数,n最大为32
 unsigned long Pseudoprime(int n=32) {
   DWord temp;
@@ -102,31 +119,102 @@ unsigned long Pseudoprime(int n=32) {
   }
 } 
 
-// 初始化生成一些小的素数，提高大素数产生效率 
-void initMiniPrime() {
-	for (int i=0; i<530; i++) {
-		if (is_probable_prime(i, 10)) {
-			miniPrime[num++] = i;
-		}	
-	}
-}
-
 // 扩展欧几里得算法
-int Extended_Euclid(int a,int &x,int b,int &y,int c) {
+int Extended_Euclid(unsigned long a,int &x,unsigned long b,int &y,unsigned long c) {
   if(b==0){x=c/a,y=0;return a;}
   else
   {
     int p=Extended_Euclid(b,x,a%b,y,c);
-    int x_=x,y_=y;
+    unsigned long x_=x,y_=y;
     x=y_; y=x_-a/b*y_; 
     return p;
   }
 }
 
+// 加密函数
+void Cipher() {
+  char c;   // 文件中的字母
+  int tag;  // 字母对应的序号
+  infile>>c;
+  tag = (c==' ' ? 0:(c-'A'+1));
+  while(infile) {
+    // 加密操作
+    unsigned long y = modN(tag, e, n);
+    outfile<<y<<" ";
+
+    // 读取下一个字节
+    infile>>c;
+    tag = (c==' ' ? 0:(c-'A'+1));
+  }
+}
+
+// 解密函数
+void InvCipher() {
+  char c;
+  string s;   // 文件中的数字串 
+  int tag=0;  // 字母对应的序号
+  infile>>s;
+  for(int i=0; i<s.length(); i++) {
+  	tag = tag*10 + (s[i]-'0');
+  }
+  while(infile) {
+    // 加密操作
+    unsigned long y = modN(tag, d, n);
+    c = (y==0 ? ' ':(y-1+'A'));
+    outfile<<c;
+
+    // 读取下一个字节
+    infile>>s;
+    tag = 0;
+    for(int i=0; i<s.length(); i++) {
+  	  tag = tag*10 + (s[i]-'0');
+    }
+  }
+}
+
+// 生成加密/解密密钥。进行相关初始化工作
+void Init() {
+  initMiniPrime();
+
+  srand((unsigned)time(NULL));
+  unsigned long p = Pseudoprime(15);
+  unsigned long  q = Pseudoprime(15);
+  n = p*q;
+  unsigned long  cn = (p-1)*(q-1);
+
+  srand((unsigned)time(NULL));
+  while(TRUE) {
+    e = randA2B(2, cn-1);
+    if (is_probable_prime(e))
+      break;
+  }
+
+  int x, y;
+  Extended_Euclid(cn, x, e, y, 1);
+  d = ((y<0) ? y+cn:y);
+  cout<<"Init Success!\n";
+}
+
 int main() {
-	initMiniPrime();
-	
-	int a = Pseudoprime(18);
-	cout<<a;
-	return 0;
+//  Init();
+
+  char filename[100];
+
+  // 机密过程调用
+  cout<<"请输入加密文件名字:";
+  cin>>filename;
+  infile.open(filename);
+  outfile.open("CipherRetult.txt");
+  Cipher();
+  infile.close();
+  outfile.close(); 
+  
+  // 解密过程调用
+  infile.open("CipherRetult.txt");
+  outfile.open("InvResult.txt");
+  InvCipher();
+  infile.close();
+  outfile.close();
+  
+  return 0;
 }
