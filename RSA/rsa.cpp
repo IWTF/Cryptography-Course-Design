@@ -30,9 +30,9 @@ unsigned long modN(long a, long q, int n) {
   a = fmod(a, n);
   while (q > 1) {
     temp = fmod(pow(a, 2), n);
-    if (q%2 == 1)
+    if (q&1)
       addition = fmod((addition*a), n);
-    q = q/2;
+    q = q>>1;
     a = temp;
   }
   return fmod((temp*addition), n);
@@ -93,10 +93,9 @@ void initMiniPrime() {
 }
 
 // 产生一个长度为n的大素数,n最大为32
-unsigned long Pseudoprime(int n=32) {
+unsigned long Pseudoprime(int n=15) {
   DWord temp;
   
-  srand((unsigned)time(NULL));
   while (TRUE) {
     // 产生一个大奇数
   	for (int i=(n-1); i>0; i--) {
@@ -105,46 +104,50 @@ unsigned long Pseudoprime(int n=32) {
     temp[0] = 1;
   
     unsigned long N = temp.to_ulong();
-    int flag = 0;
-    for (int i=0; i<99; i++) {
-    	if (fmod(N, miniPrime[i]) == 0) {
-    		flag = 1;
-			  break;
-		  }
-	  }
-	  if (flag == 1)
-	  	continue;
+//    int flag = 0;
+//    for (int i=0; i<99; i++) {
+//    	if (fmod(N, miniPrime[i]) == 0) {
+//    		flag = 1;
+//			  break;
+//		  }
+//	  }
+//	  if (flag == 1)
+//	  	continue;
     if (is_probable_prime(N))
       return N;
   }
 } 
 
 // 扩展欧几里得算法
+// xa+yb=c, 求x，y的值 
 int Extended_Euclid(unsigned long a,int &x,unsigned long b,int &y,unsigned long c) {
-  if(b==0){x=c/a,y=0;return a;}
-  else
-  {
+  if(b==0) { // 特殊情况 
+    x=c/a,y=0;
+	return a;
+  } else {
     int p=Extended_Euclid(b,x,a%b,y,c);
-    unsigned long x_=x,y_=y;
-    x=y_; y=x_-a/b*y_; 
+    unsigned long xTemp=x,yTemp=y;
+    x=yTemp;
+	y=xTemp - a/b*yTemp; 
     return p;
   }
 }
 
 // 加密函数
 void Cipher() {
-  char c;   // 文件中的字母
-  int tag;  // 字母对应的序号
-  infile>>c;
-  tag = (c==' ' ? 0:(c-'A'+1));
-  while(infile) {
-    // 加密操作
-    unsigned long y = modN(tag, e, n);
-    outfile<<y<<" ";
-
-    // 读取下一个字节
-    infile>>c;
-    tag = (c==' ' ? 0:(c-'A'+1));
+  string s;
+  int tag;
+  
+  while(!infile.eof()) {
+  	getline(infile, s);
+  	cout<<s<<"\n";
+    for (int i=0; i<s.length(); i++) {
+      if ((s[i]!=' ') && (s[i]<'A' || (s[i]>'Z'&&s[i]<'a') || s[i]>'z'))
+      	continue;
+   	  tag = (s[i]==' ' ? 0:(fmod(s[i]-'A', 32)+1));
+  	  unsigned long y = modN(tag, e, n);
+      outfile<<y<<" ";
+    }
   }
 }
 
@@ -175,13 +178,18 @@ void InvCipher() {
 // 生成加密/解密密钥。进行相关初始化工作
 void Init() {
   initMiniPrime();
-
+  
+  // bug: 只能连续产生两个不同素数...之后随机性就没有了 
   srand((unsigned)time(NULL));
-  unsigned long p = Pseudoprime(15);
-  unsigned long  q = Pseudoprime(15);
+  unsigned long p=0,q=0;
+  while(p == q) {
+  	p = Pseudoprime(8);
+    q = Pseudoprime(9);
+  }
   n = p*q;
   unsigned long  cn = (p-1)*(q-1);
 
+  // 产生一个与(p-1)*(q-1)互素的整数 （加密密钥） 
   srand((unsigned)time(NULL));
   while(TRUE) {
     e = randA2B(2, cn-1);
@@ -189,14 +197,20 @@ void Init() {
       break;
   }
 
+  // 生成解密密钥 
   int x, y;
   Extended_Euclid(cn, x, e, y, 1);
   d = ((y<0) ? y+cn:y);
-  cout<<"Init Success!\n";
+  cout<<"================密钥信息==================\n";
+  cout<<"p = "<<p<<"\tq = "<<q
+	  <<"\nn = "<<n
+	  <<"\ne = "<<e<<"\td = "<<d;
+  cout<<"\nInit Success!\n";
+  cout<<"=========================================\n\n";
 }
 
 int main() {
-//  Init();
+  Init();
 
   char filename[100];
 
