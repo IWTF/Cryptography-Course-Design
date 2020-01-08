@@ -23,7 +23,10 @@ ofstream outfile;
 
 #define randA2B(a, b) (rand() % (b-a+1))+ a;
 
-// 自定义取模函数，防止大数溢出 (a^q)mod(m)
+/*****************************素性测试相关函数*****************************/
+/**
+ * 自定义取模函数，防止大数溢出 (a^q)mod(m)
+ */
 unsigned long modN(long a, long q, int n) {
   unsigned long addition = 1;
   unsigned long temp;
@@ -38,7 +41,9 @@ unsigned long modN(long a, long q, int n) {
   return fmod((temp*addition), n);
 }
 
-// 测似乎以a为底时，n是否为合数
+/** 
+ * 测似乎以a为底时，n是否为合数
+ */
 int is_composite(unsigned long a, unsigned long d, unsigned long s, unsigned long n) {
   if (modN(a, d, n) == 1)
     return FALSE;
@@ -50,7 +55,7 @@ int is_composite(unsigned long a, unsigned long d, unsigned long s, unsigned lon
 }
 
 /** 
- *            Miller-Rabin素性测试
+ * Miller-Rabin素性测试
  * 要测试N是否为素数，首先将N−1分解为(2^s)d。
  * 在每次测试开始时，先随机选一个介于[1,N−1]的整数a，之后如果对所有的r∈[0,s−1]，
  * 若(a^d)modN≠1且(a^(2^r))*dmodN≠−1，则N是合数。否则，N有3/4的概率为素数。
@@ -83,7 +88,10 @@ int is_probable_prime(unsigned long n, int accuracy=5) {
   return TRUE;
 }
 
-// 初始化生成一些小的素数，提高大素数产生效率 
+/*****************************大素数生成相关函数*****************************/
+/**
+ * 初始化生成一些小的素数，提高大素数产生效率
+ */ 
 void initMiniPrime() {
 	for (int i=0; i<530; i++) {
 		if (is_probable_prime(i, 10)) {
@@ -92,7 +100,9 @@ void initMiniPrime() {
 	}
 }
 
-// 产生一个长度为n的大素数,n最大为32
+/**
+ * 产生一个长度为n的大素数,n最大为32
+ */
 unsigned long Pseudoprime(int n=15) {
   DWord temp;
   
@@ -118,8 +128,11 @@ unsigned long Pseudoprime(int n=15) {
   }
 } 
 
-// 扩展欧几里得算法
-// xa+yb=c, 求x，y的值 
+/********************************求逆函数*******************************/
+/**
+ * 扩展欧几里得算法
+ * xa+yb=c, 求x，y的值
+ */
 int Extended_Euclid(unsigned long a,int &x,unsigned long b,int &y,unsigned long c) {
   if(b==0) { // 特殊情况 
     x=c/a,y=0;
@@ -133,7 +146,10 @@ int Extended_Euclid(unsigned long a,int &x,unsigned long b,int &y,unsigned long 
   }
 }
 
-// 加密函数
+/*****************************加密/解密函数*****************************/
+/** 
+ * 加密函数
+ */
 void Cipher() {
   string s;
   int tag;
@@ -151,7 +167,9 @@ void Cipher() {
   }
 }
 
-// 解密函数
+/** 
+ * 解密函数
+ */
 void InvCipher() {
   char c;
   string s;   // 文件中的数字串 
@@ -175,7 +193,9 @@ void InvCipher() {
   }
 }
 
-// 生成加密/解密密钥。进行相关初始化工作
+/**
+ * 生成加密/解密密钥。进行相关初始化工作
+ */
 void Init() {
   initMiniPrime();
   
