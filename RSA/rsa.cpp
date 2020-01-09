@@ -42,7 +42,7 @@ unsigned long modN(long a, long q, int n) {
 }
 
 /** 
- * 测似乎以a为底时，n是否为合数
+ * 测试以a为底时，n是否为合数
  */
 int is_composite(unsigned long a, unsigned long d, unsigned long s, unsigned long n) {
   if (modN(a, d, n) == 1)
@@ -56,9 +56,9 @@ int is_composite(unsigned long a, unsigned long d, unsigned long s, unsigned lon
 
 /** 
  * Miller-Rabin素性测试
- * 要测试N是否为素数，首先将N−1分解为(2^s)d。
- * 在每次测试开始时，先随机选一个介于[1,N−1]的整数a，之后如果对所有的r∈[0,s−1]，
- * 若(a^d)modN≠1且(a^(2^r))*dmodN≠−1，则N是合数。否则，N有3/4的概率为素数。
+ * 要测试N是否为素数，首先将N-1分解为(2^s)d。
+ * 在每次测试开始时，先随机选一个介于[1,N-1]的整数a，之后如果对所有的r∈[0,s-1]，
+ * 若(a^d)modN≠1且(a^(2^r))*dmodN≠1，则N是合数。否则，N有3/4的概率为素数。
  */
 int is_probable_prime(unsigned long n, int accuracy=5) {
   if (n < 2)
@@ -141,7 +141,7 @@ int Extended_Euclid(unsigned long a,int &x,unsigned long b,int &y,unsigned long 
     int p=Extended_Euclid(b,x,a%b,y,c);
     unsigned long xTemp=x,yTemp=y;
     x=yTemp;
-	y=xTemp - a/b*yTemp; 
+	  y=xTemp - a/b*yTemp; 
     return p;
   }
 }

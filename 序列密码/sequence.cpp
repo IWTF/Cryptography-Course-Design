@@ -1,10 +1,4 @@
-/****************************************************
-* 													*
-* 题目：     序列密码								*
-* 作者：     黄子文									*
-* 完成时间： 2019.12.9								*
-* 													*
-****************************************************/ 
+ 
 #include<iostream>
 #include<math.h>
 #include<fstream>
@@ -16,7 +10,7 @@ const int n = 5;
 // 求出下一状态
 void nextState(int *arr)
 {
-	int a5 = arr[0]^arr[3];
+	int a5 = arr[0]^arr[3];     // 反馈函数
 	for (int i = 0; i < n - 1; i++)
 	{
 		arr[i] = arr[i + 1];
@@ -32,7 +26,9 @@ void getState(int *initState, int s[32][5], int *seq){
 	}
 }
 
-
+/**
+ * 将seq[]密钥字符串，转为二进制数，方便直接与明文异或
+ */
 char keyToChar(int beg, int *seq) {
 	int ret=0;
 	int no = 0;
@@ -70,13 +66,19 @@ void myXOR(char *iname, char *oname, int *seq) {
 int main()
 {
 	int x[n];
-	int s[32][5];     // 存储状态，总共有2^5共32种不同的状态
+
+	/**
+	 * 由于序列产生器有5位，所以周期最大为32
+	 * s数组：存储状态，总共有2^5共32种不同的状态
+	 */
+	int s[32][5];     
 	int seq[32];      // 输出序列
 	int s_num = 0;
  
-	cout << "请输入初始状态:";
+	cout << "请输入初始状态:(0/1)";
 	for (int i = 0; i < n; i++)
 		cin >> x[i];
+		
 	// 生成输出序列seq
 	getState(x, s, seq); 
 
