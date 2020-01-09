@@ -6,7 +6,7 @@
 #include <iostream>
 
 /**
- * 函数功能:初始化RSA对象的相关信息
+ * 函数功能:初始化DSA对象的相关信息
  * 参数含义:len表示大素数的二进制位数
  */
 void DSA::init(const unsigned len) {
@@ -17,10 +17,6 @@ void DSA::init(const unsigned len) {
     BigInteger temp = p-1;
 	// 生成p-1的素因子q 
     PrimeFactorGen();
-    
-//	q = createPrime(160, 5);
-//	while(temp.mod(q) != BigInteger("0"))
-//		q = createPrime(160, 5);
 	
 	BigInteger h = createRandomSmaller(p);
 	g = h.modPow(temp.divide(q), p);
@@ -55,8 +51,7 @@ void DSA::PrimeFactorGen() {// 160位2进制数，等于40位16进制数
 }
 
 /**
- * 函数功能:使用公钥进行加密
- * 参数含义:m表示要加密的明文
+ * 函数功能:签名算法
  */
 void DSA::signature(const BigInteger & m, BigInteger & r, BigInteger & s) {
     k = createOddNum(100);
@@ -65,8 +60,7 @@ void DSA::signature(const BigInteger & m, BigInteger & r, BigInteger & s) {
 }
 
 /**
- * 函数功能:使用私钥进行解密
- * 参数含义:c表示要解密的密文
+ * 函数功能:验证算法
  */
 int DSA::verification(const BigInteger & m, BigInteger & r, BigInteger & s, BigInteger & w, BigInteger & u1, BigInteger & u2) {
 	w = s.modInverse(q);
@@ -85,8 +79,8 @@ int DSA::verification(const BigInteger & m, BigInteger & r, BigInteger & s, BigI
 }
 
 /**
- * 函数功能:输出RSA相关数据
- * 参数含义:out表示输出流,rsa表示要输出的RSA对象
+ * 函数功能:输出DSA相关数据
+ * 参数含义:out表示输出流,rsa表示要输出的DSA对象
  */
 std::ostream & operator << (std::ostream & out, const DSA & dsa) {
     out << "p: " << dsa.p << "\n";
