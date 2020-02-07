@@ -38,7 +38,8 @@ BigInteger::BigInteger(const std::string & str): is_negative(false) {
 
     for (size_t i=0; i<t.size(); i+=base_char) {
         base_t sum = 0;
-        for (int j=0; j<base_char; ++j) {    // 8位十六进制组成大整数的一位
+        // unsigned会默认编译为unsigned int，32位 
+        for (int j=0; j<base_char; ++j) {    // 8位十六进制组成大整数的一位（4x8） 
             char ch = t[i+j];
             int num = hexToNum(ch);
             sum = ((sum<<4) | (num));

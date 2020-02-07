@@ -7,7 +7,6 @@
  */
 void EncryptDecrypt::menu() {
 	/* 计算前，先初始化 */
-	SHA1Init(&ctx); // 对hash对象初始化 
 	
     std::cout << "**********Welcome to use DSA encoder**********" << std::endl;
     std::cout << "               s: signature 签名             " << std::endl;

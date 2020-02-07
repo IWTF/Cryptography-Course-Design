@@ -3,7 +3,6 @@
 
 #include <string>
 #include "DSA.h"
-#include "SHA1.h" 
 class EncryptDecrypt {
 public:
     EncryptDecrypt() {}
@@ -24,7 +23,6 @@ protected:
     bool islegal(const std::string &);// 判断输入字符串是否合法
 private:
     DSA dsa;
-    SHA1_CTX ctx;
     BigInteger m;  // 要进行签名的消息
 };
 
